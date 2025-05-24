@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    image: invoice-app
+    container_name: invoice-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_KEY
+      - APP_URL=https://your-render-url.onrender.com
+      - DB_CONNECTION=pgsql
+      - DB_HOST=your-render-db-host
+      - DB_PORT=5432
+      - DB_DATABASE=your-db-name
+      - DB_USERNAME=your-db-user
+      - DB_PASSWORD=your-db-password
+      - QUEUE_CONNECTION=database
+      - SESSION_DRIVER=database
+    depends_on:
+      - db
+    ports:
+      - "8000:80"
+
+  db:
+    image: postgres:15
+    container_name: invoice-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: your-db-name
+      POSTGRES_USER: your-db-user
+      POSTGRES_PASSWORD: your-db-password
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  dbdata:
